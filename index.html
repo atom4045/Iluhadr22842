@@ -1,147 +1,683 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <style>
-        /* Сброс стилей для почты */
-        body { margin: 0; padding: 0; background-color: #050505; }
-        
-        .game-wrapper {
-            width: 100%;
-            max-width: 400px;
-            margin: 20px auto;
-            background: #000;
-            position: relative;
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
-            border: 2px solid #0ff;
-            box-shadow: 0 0 15px #0ff;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ИЛЮХА, С ДР БРАТАН 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Unbounded:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #FFD600;
+    --red: #FF2D2D;
+    --dark: #0D0D0D;
+    --neon: #00FF87;
+    --blue: #00C2FF;
+  }
 
-        .header {
-            color: #0ff;
-            text-align: center;
-            padding: 10px;
-            text-transform: uppercase;
-            text-shadow: 0 0 5px #0ff;
-        }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* Зона лабиринта */
-        .maze-container {
-            position: relative;
-            width: 300px;
-            height: 400px;
-            margin: 0 auto;
-            background: #000;
-        }
+  body {
+    background: var(--dark);
+    color: #fff;
+    font-family: 'Unbounded', sans-serif;
+    overflow-x: hidden;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ctext y='28' font-size='28'%3E🎉%3C/text%3E%3C/svg%3E"), auto;
+  }
 
-        /* Стены-ловушки */
-        .wall {
-            position: absolute;
-            background: #f0f;
-            box-shadow: 0 0 10px #f0f, inset 0 0 5px #fff;
-            transition: opacity 0.1s;
-            z-index: 5;
-        }
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    padding: 40px 20px;
+    background: radial-gradient(ellipse at center, #1a0a2e 0%, #0D0D0D 70%);
+    overflow: hidden;
+  }
 
-        /* Логика проигрыша через hover (для ПК) и активные зоны (для мобильных) */
-        .wall:hover {
-            opacity: 1;
-            background: #ff0000;
-            box-shadow: 0 0 20px #ff0000;
-        }
+  .stars {
+    position: absolute;
+    width: 100%; height: 100%;
+    top: 0; left: 0;
+    pointer-events: none;
+  }
 
-        /* Экран смерти (появляется при наведении на стену) */
-        .death-zone {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 0, 0, 0.8);
-            display: none;
-            z-index: 20;
-            color: white;
-            text-align: center;
-            padding-top: 150px;
-        }
+  .star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle 2s infinite alternate;
+  }
 
-        /* Сложная трасса */
-        .w1 { top: 0; left: 0; width: 100px; height: 400px; } /* Левый блок */
-        .w2 { top: 0; right: 0; width: 100px; height: 400px; } /* Правый блок */
-        .w3 { top: 150px; left: 100px; width: 50px; height: 20px; } /* Преграда 1 */
-        .w4 { top: 250px; left: 150px; width: 50px; height: 20px; } /* Преграда 2 */
+  @keyframes twinkle {
+    from { opacity: 0.1; transform: scale(1); }
+    to   { opacity: 1;   transform: scale(1.5); }
+  }
 
-        /* Путь, по которому надо идти */
-        .path {
-            position: absolute;
-            top: 0; left: 100px;
-            width: 100px; height: 400px;
-            background: rgba(0, 255, 255, 0.05);
-            z-index: 1;
-        }
+  .late-badge {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(10px, 2vw, 14px);
+    color: var(--dark);
+    background: var(--yellow);
+    padding: 8px 20px;
+    border-radius: 4px;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    animation: badgePulse 1.5s infinite;
+    box-shadow: 0 0 30px var(--yellow);
+  }
 
-        /* Кнопка финиша */
-        .finish-trigger {
-            position: absolute;
-            bottom: 10px;
-            left: 125px;
-            width: 50px;
-            height: 50px;
-            background: #0f0;
-            border-radius: 50%;
-            box-shadow: 0 0 20px #0f0;
-            z-index: 10;
-            cursor: pointer;
-            text-align: center;
-            line-height: 50px;
-            color: #000;
-            font-weight: bold;
-            text-decoration: none;
-        }
+  @keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.05); box-shadow: 0 0 50px var(--yellow); }
+  }
 
-        /* Чекбокс для победы */
-        #win-cb { display: none; }
-        #win-cb:checked ~ .win-overlay { display: block; }
+  .hero-title {
+    font-family: 'Russo One', sans-serif;
+    font-size: clamp(50px, 15vw, 160px);
+    line-height: 0.9;
+    text-transform: uppercase;
+    letter-spacing: -3px;
+    background: linear-gradient(135deg, var(--yellow) 0%, var(--red) 50%, #FF8C00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: titleShake 0.3s infinite;
+    filter: drop-shadow(0 0 40px rgba(255,214,0,0.5));
+  }
 
-        .win-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 50;
-            display: none;
-            color: #0f0;
-            text-align: center;
-            padding-top: 100px;
-            border: 2px solid #0f0;
-        }
+  @keyframes titleShake {
+    0%   { transform: rotate(-0.5deg) scale(1.00); }
+    25%  { transform: rotate(0.5deg)  scale(1.01); }
+    50%  { transform: rotate(-0.3deg) scale(1.00); }
+    75%  { transform: rotate(0.3deg)  scale(1.01); }
+    100% { transform: rotate(-0.5deg) scale(1.00); }
+  }
 
-        .neon-text {
-            font-size: 24px;
-            text-shadow: 0 0 10px #0f0;
-        }
-    </style>
+  .hero-sub {
+    font-size: clamp(14px, 3vw, 26px);
+    color: var(--neon);
+    margin-top: 20px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  .meme-img {
+    font-size: clamp(80px, 20vw, 180px);
+    margin: 30px 0;
+    animation: bounce 0.7s infinite alternate cubic-bezier(.36,.07,.19,.97);
+    filter: drop-shadow(0 10px 30px rgba(0,255,135,0.4));
+  }
+
+  @keyframes bounce {
+    from { transform: translateY(0) rotate(-5deg); }
+    to   { transform: translateY(-20px) rotate(5deg); }
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 30px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 3px;
+    animation: fadeUpDown 2s infinite;
+  }
+
+  @keyframes fadeUpDown {
+    0%, 100% { opacity: 0.4; transform: translateY(0); }
+    50%       { opacity: 1;   transform: translateY(-8px); }
+  }
+
+  /* ROAST SECTION */
+  #roast {
+    padding: 80px 20px;
+    text-align: center;
+    background: #0a0a0a;
+    border-top: 3px solid var(--yellow);
+    border-bottom: 3px solid var(--yellow);
+  }
+
+  .section-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(12px, 3vw, 22px);
+    color: var(--yellow);
+    margin-bottom: 50px;
+    text-shadow: 3px 3px 0 var(--red);
+  }
+
+  .roast-card {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 2px solid var(--neon);
+    border-radius: 16px;
+    padding: 30px;
+    max-width: 600px;
+    margin: 0 auto 30px;
+    font-size: clamp(14px, 2.5vw, 20px);
+    line-height: 1.6;
+    position: relative;
+    box-shadow: 0 0 30px rgba(0,255,135,0.15);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .roast-card:hover {
+    transform: translateY(-5px) rotate(1deg);
+    box-shadow: 0 0 60px rgba(0,255,135,0.3);
+  }
+
+  .roast-emoji {
+    font-size: 40px;
+    margin-bottom: 15px;
+    display: block;
+  }
+
+  /* GAMES SECTION */
+  #games {
+    padding: 80px 20px;
+    text-align: center;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .game-card {
+    background: #111;
+    border: 2px solid #333;
+    border-radius: 16px;
+    padding: 30px 20px;
+    transition: all 0.3s;
+  }
+
+  .game-card:hover {
+    border-color: var(--blue);
+    box-shadow: 0 0 40px rgba(0,194,255,0.2);
+    transform: translateY(-5px);
+  }
+
+  .game-card h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: var(--blue);
+    letter-spacing: 2px;
+  }
+
+  /* CLICKER GAME */
+  #clickCount {
+    font-family: 'Russo One', sans-serif;
+    font-size: 60px;
+    color: var(--yellow);
+    display: block;
+    margin: 10px 0;
+    text-shadow: 0 0 20px var(--yellow);
+    transition: transform 0.1s;
+  }
+
+  .click-btn {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 50px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s;
+    filter: drop-shadow(0 5px 15px rgba(255,214,0,0.5));
+  }
+
+  .click-btn:active {
+    transform: scale(0.85) rotate(15deg);
+  }
+
+  .click-label {
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 2px;
+    margin-top: 8px;
+  }
+
+  /* SLOT MACHINE */
+  .slot-display {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 15px 0;
+  }
+
+  .slot-reel {
+    background: #1a1a1a;
+    border: 2px solid #444;
+    border-radius: 8px;
+    width: 60px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    transition: all 0.1s;
+    overflow: hidden;
+  }
+
+  .slot-reel.spinning {
+    animation: reelSpin 0.1s infinite;
+  }
+
+  @keyframes reelSpin {
+    0%   { transform: translateY(0); }
+    25%  { transform: translateY(-5px); }
+    75%  { transform: translateY(5px); }
+    100% { transform: translateY(0); }
+  }
+
+  .slot-result {
+    font-size: 13px;
+    color: var(--neon);
+    min-height: 22px;
+    margin-top: 8px;
+    letter-spacing: 1px;
+  }
+
+  /* TRIVIA */
+  .trivia-q {
+    font-size: clamp(13px, 2vw, 16px);
+    line-height: 1.5;
+    margin-bottom: 15px;
+    color: #ddd;
+  }
+
+  .trivia-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .trivia-btn {
+    background: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #ccc;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+  }
+
+  .trivia-btn:hover { background: #252525; border-color: var(--blue); color: #fff; }
+  .trivia-btn.correct { background: rgba(0,255,135,0.15); border-color: var(--neon); color: var(--neon); }
+  .trivia-btn.wrong   { background: rgba(255,45,45,0.15);  border-color: var(--red);  color: var(--red); }
+
+  /* WISH SECTION */
+  #wish {
+    padding: 80px 20px;
+    text-align: center;
+    background: radial-gradient(ellipse at center, #0d0d1f 0%, #0D0D0D 100%);
+    border-top: 3px solid var(--red);
+  }
+
+  .wish-box {
+    max-width: 700px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #1a0a00, #0d0d2e);
+    border: 2px solid var(--yellow);
+    border-radius: 20px;
+    padding: 50px 40px;
+    box-shadow: 0 0 60px rgba(255,214,0,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .wish-box::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: conic-gradient(transparent, rgba(255,214,0,0.05), transparent, transparent);
+    animation: rotateGlow 4s linear infinite;
+  }
+
+  @keyframes rotateGlow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  .wish-text {
+    font-size: clamp(16px, 3vw, 24px);
+    line-height: 1.8;
+    position: relative;
+    z-index: 1;
+  }
+
+  .wish-text span { color: var(--yellow); }
+
+  /* CONFETTI BUTTON */
+  .mega-btn {
+    display: inline-block;
+    margin-top: 40px;
+    background: linear-gradient(135deg, var(--yellow), var(--red));
+    color: var(--dark);
+    font-family: 'Russo One', sans-serif;
+    font-size: clamp(14px, 3vw, 22px);
+    padding: 16px 40px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    box-shadow: 0 8px 30px rgba(255,214,0,0.4);
+    transition: all 0.2s;
+    position: relative;
+    z-index: 1;
+  }
+
+  .mega-btn:hover {
+    transform: scale(1.05) translateY(-3px);
+    box-shadow: 0 15px 50px rgba(255,214,0,0.6);
+  }
+
+  .mega-btn:active { transform: scale(0.97); }
+
+  /* CONFETTI PARTICLE */
+  .confetti-piece {
+    position: fixed;
+    width: 10px; height: 10px;
+    top: -20px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 9999;
+    animation: confettiFall linear forwards;
+  }
+
+  @keyframes confettiFall {
+    to {
+      transform: translateY(110vh) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 30px;
+    font-size: 11px;
+    color: #333;
+    letter-spacing: 3px;
+  }
+
+  /* BTN SHARED */
+  .game-action-btn {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    padding: 10px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    margin-top: 10px;
+  }
+
+  .game-action-btn:hover {
+    background: var(--blue);
+    color: var(--dark);
+    box-shadow: 0 0 20px var(--blue);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 500px) {
+    .wish-box { padding: 30px 20px; }
+    .roast-card { padding: 20px; }
+  }
+</style>
 </head>
 <body>
 
-<div class="game-wrapper">
-    <input type="checkbox" id="win-cb">
-    
-    <div class="header">Neon Maze: Hardcore</div>
-    
-    <div class="maze-container">
-        <div class="wall w1"></div>
-        <div class="wall w2"></div>
-        <div class="wall w3"></div>
-        <div class="wall w4"></div>
+<!-- STARS -->
+<div id="hero">
+  <div class="stars" id="starsContainer"></div>
 
-        <div class="path"></div>
+  <div class="late-badge">⚠️ ОПОЗДАНИЕ ЗАСЧИТАНО ⚠️</div>
 
-        <label for="win-cb" class="finish-trigger">WIN</label>
+  <div class="hero-title">ИЛЮХА!</div>
 
-        <div class="win-overlay">
-            <h1 class="neon-text">LEVEL COMPLETE</h1>
-            <p style="color: #0ff;">Ты настоящий кибер-атлет!</p>
-            <div style="margin-top: 50px; font-size: 12px; color: #555;">Code: NEON-ULTRA-2026</div>
-        </div>
-    </div>
+  <div class="meme-img">🎂</div>
+
+  <div class="hero-sub">С Д Н Ю Х О Й &nbsp; Б Р А Т А Н</div>
+
+  <p style="margin-top:25px; color:#666; font-size:12px; letter-spacing:3px; text-transform:uppercase;">
+    (ну да, немного поздно. ну и что.)
+  </p>
+
+  <div class="scroll-hint">▼ ЛИСТАЙ ВНИЗ ▼</div>
 </div>
 
-</body>
-</html>
+<!-- ROAST -->
+<section id="roast">
+  <div class="section-title">📋 ОФИЦИАЛЬНЫЙ РОАСТ ИМЕНИННИКА</div>
+
+  <div class="roast-card">
+    <span class="roast-emoji">🐢</span>
+    Ты повзрослел на целый год, а мы всё ещё ждём твой ответ в чатике который ты прочитал 3 дня назад
+  </div>
+
+  <div class="roast-card" style="border-color: var(--yellow);">
+    <span class="roast-emoji">🧠</span>
+    Илюха говорит "сейчас выйду" — это значит ещё минимум 40 минут. Мы всё знаем.
+  </div>
+
+  <div class="roast-card" style="border-color: var(--red);">
+    <span class="roast-emoji">🎮</span>
+    С каждым годом ты умнеешь... по крайней мере в этом убеждён ты сам. Мы тебя любим.
+  </div>
+
+  <div class="roast-card" style="border-color: var(--blue);">
+    <span class="roast-emoji">🥳</span>
+    Ещё один год — ещё на шаг ближе к тому, чтобы наконец разобраться что делать с жизнью. Всё получится, братан!
+  </div>
+</section>
+
+<!-- GAMES -->
+<section id="games">
+  <div class="section-title">🕹️ МИНИ-ИГРЫ ДЛЯ ИМЕНИННИКА</div>
+
+  <div class="games-grid">
+
+    <!-- CLICKER -->
+    <div class="game-card">
+      <h3>🎂 КЛИКЕР ТОРТОВ</h3>
+      <p style="font-size:11px; color:#555; margin-bottom:10px; letter-spacing:1px;">ЖМИ НА ТОРТ — НАБИРАЙ ОЧКИ</p>
+      <span id="clickCount">0</span>
+      <div>
+        <button class="click-btn" onclick="clickCake(this)">🎂</button>
+      </div>
+      <p class="click-label" id="clickLabel">КЛИКОВ</p>
+      <p id="clickMilestone" style="font-size:11px; color:var(--neon); margin-top:8px; min-height:18px;"></p>
+    </div>
+
+    <!-- SLOT MACHINE -->
+    <div class="game-card">
+      <h3>🎰 СЛОТ МАШИНА СУДЬБЫ</h3>
+      <p style="font-size:11px; color:#555; margin-bottom:10px; letter-spacing:1px;">ИСПЫТАЙ УДАЧУ В ДЕНЬ РОЖДЕНИЯ</p>
+      <div class="slot-display">
+        <div class="slot-reel" id="r1">🎂</div>
+        <div class="slot-reel" id="r2">🎉</div>
+        <div class="slot-reel" id="r3">🎁</div>
+      </div>
+      <div class="slot-result" id="slotResult">Крути — узнай свою судьбу!</div>
+      <button class="game-action-btn" onclick="spinSlots()">🎰 КРУТИТЬ</button>
+    </div>
+
+    <!-- TRIVIA -->
+    <div class="game-card" style="grid-column: span 1;">
+      <h3>🧠 ВИКТОРИНА ПРО ИЛЮХУ</h3>
+      <div id="triviaContainer">
+        <div class="trivia-q" id="triviaQ">Загружаем вопрос...</div>
+        <div class="trivia-options" id="triviaOpts"></div>
+        <p id="triviaScore" style="font-size:11px; color:var(--neon); margin-top:10px; letter-spacing:1px;"></p>
+      </div>
+    </div>
+
+    <!-- BIRTHDAY GENERATOR -->
+    <div class="game-card">
+      <h3>🔮 ПРЕДСКАЗАНИЕ НА ГОД</h3>
+      <p style="font-size:11px; color:#555; margin-bottom:15px; letter-spacing:1px;">ЧТО ЖДЁТ ИЛЮХУ В ЭТОМ ГОДУ?</p>
+      <div id="prediction" style="font-size:14px; line-height:1.6; color:#ccc; min-height:80px; display:flex; align-items:center; justify-content:center;">
+        Нажми кнопку!
+      </div>
+      <button class="game-action-btn" onclick="getPrediction()">🔮 ПРЕДСКАЗАТЬ</button>
+    </div>
+
+    <!-- REACTION GAME -->
+    <div class="game-card">
+      <h3>⚡ ТЕСТ РЕАКЦИИ</h3>
+      <p style="font-size:11px; color:#555; margin-bottom:10px; letter-spacing:1px;">КАК ТОЛЬКО СТАНЕТ ЗЕЛЁНЫМ — ЖМИ!</p>
+      <div id="reactionBox" onclick="reactionClick()" style="
+        width:100%; height:80px; background:#222; border-radius:10px;
+        display:flex; align-items:center; justify-content:center;
+        font-size:13px; color:#555; cursor:pointer; border:2px solid #333;
+        letter-spacing:2px; transition:all 0.2s; user-select:none;
+      ">НАЖМИ СТАРТ</div>
+      <p id="reactionResult" style="font-size:12px; color:var(--neon); margin-top:10px; min-height:18px; letter-spacing:1px;"></p>
+      <button class="game-action-btn" id="reactionBtn" onclick="startReaction()">▶ СТАРТ</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- WISH -->
+<section id="wish">
+  <div class="section-title">💌 ПОСЛАНИЕ БРАТАНУ</div>
+  <div class="wish-box">
+    <p class="wish-text">
+      Братан, <span>Илюха!</span> 🎉<br><br>
+      Ну да, мы немного <span>опоздали</span>.<br>
+      Но это потому что хотели поздравить <span>по-особенному</span>.<br><br>
+      Ты реально <span>огонь</span>-человек.<br>
+      Желаем тебе здоровья, денег побольше,<br>
+      чтобы всё задуманное <span>сбывалось</span>,<br>
+      и чтобы в следующем году мы поздравили тебя <span>вовремя</span> 😅<br><br>
+      <span>С днём рождения, братан! 🔥</span>
+    </p>
+    <button class="mega-btn" onclick="launchConfetti()">🎊 ЗАПУСТИТЬ КОНФЕТТИ!</button>
+  </div>
+</section>
+
+<footer>
+  © СДЕЛАНО С ЗАПОЗДАНИЕМ, НО С ДУШОЙ &nbsp;|&nbsp; ИЛЮХА 🎂
+</footer>
+
+<script>
+// ===== STARS =====
+const starsEl = document.getElementById('starsContainer');
+for (let i = 0; i < 80; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random() * 3 + 1;
+  s.style.cssText = `
+    width:${size}px; height:${size}px;
+    left:${Math.random()*100}%; top:${Math.random()*100}%;
+    animation-delay:${Math.random()*3}s;
+    animation-duration:${1.5+Math.random()*2}s;
+  `;
+  starsEl.appendChild(s);
+}
+
+// ===== CLICKER =====
+let clicks = 0;
+const milestones = {10:'🔥 РАЗОГРЕВАЕМСЯ!',50:'💪 ЖЖЁШЬ!',100:'🎂 СТО ТОРТОВ!',250:'😤 МАШИНА!',500:'👑 ЛЕГЕНДА!',1000:'🚀 ВЫ СУМАСШЕДШИЕ!'};
+
+function clickCake(btn) {
+  clicks++;
+  document.getElementById('clickCount').textContent = clicks;
+  btn.style.transform = 'scale(0.8) rotate(20deg)';
+  setTimeout(() => btn.style.transform = '', 100);
+  if (milestones[clicks]) {
+    document.getElementById('clickMilestone').textContent = milestones[clicks];
+  }
+}
+
+// ===== SLOTS =====
+const slotEmojis = ['🎂','🎉','🎁','🍕','🍺','💰','🎰','⭐','🔥','💎','🐢','👑'];
+const slotWins = {
+  '🎂🎂🎂': '🏆 ДЖЕКПОТ! ТРИ ТОРТА! СЧАСТЬЕ!',
+  '🎉🎉🎉': '🥳 ТРОЙНОЙ ПРАЗДНИК!',
+  '💰💰💰': '💸 БОГАТСТВО! (в мечтах)',
+  '👑👑👑': '👑 ТРЁХКРАТНЫЙ КОРОЛЬ!',
+  '🔥🔥🔥': '🔥 ОГОНЬ! ОГОНЬ! ОГОНЬ!',
+  '💎💎💎': '💎 БРИЛЛИАНТОВАЯ УДАЧА!',
+};
+let isSpinning = false;
+
+function spinSlots() {
+  if (isSpinning) return;
+  isSpinning = true;
+  document.getElementById('slotResult').textContent = '';
+  const reels = ['r1','r2','r3'];
+  reels.forEach(id => document.getElementById(id).classList.add('spinning'));
+
+  let counts = [0,0,0];
+  const finals = reels.map(() => slotEmojis[Math.floor(Math.random()*slotEmojis.length)]);
+
+  reels.forEach((id, i) => {
+    const delay = 600 + i * 400;
+    let interval = setInterval(() => {
+      document.getElementById(id).textContent = slotEmojis[Math.floor(Math.random()*slotEmojis.length)];
+    }, 80);
+    setTimeout(() => {
+      clearInterval(interval);
+      document.getElementById(id).textContent = finals[i];
+      document.getElementById(id).classList.remove('spinning');
+      if (i === 2) {
+        isSpinning = false;
+        const combo = finals.join('');
+        const win = slotWins[combo];
+        document.getElementById('slotResult').textContent = win || (finals[0]===finals[1]||finals[1]===finals[2]||finals[0]===finals[2] ? '😮 Почти! Крути ещё!' : '😔 Не повезло... Ещё раз!');
+      }
+    }, delay);
+  });
+}
+
+// ===== TRIVIA =====
+const triviaData = [
+  { q:'Сколько минут Илюха говорит "я уже выхожу" прежде чем реально выйти?', opts:['5 минут','15 минут','Около часа','Он вообще не выйдет'], a:2 },
+  { q:'Что Илюха делает чаще всего когда получает сообщение?', opts:['Отвечает сразу','Читает и молчит','Звонит в ответ','Пишет голосовое'], a:1 },
+  { q:'Как называется главный навык Илюхи в жизни?', opts:['Готовить борщ','Опаздывать стильно','Чинить всё подряд','Играть в шахматы'], a:1 },
+  { q:'Что Илюха скажет когда увидит этот сайт?', opts:['"Братан, красава!"','"Это вы?"','"Хм, поздно"','Всё перечисленное'], a:3 },
+  { q:'Каков секрет вечной молодости Илюхи?', opts:['Спорт каждый день','Вообще ничего не делать','Хорошие друзья','Просто повезло'], a:2 },
+];
+let tScore = 0, tIdx = 0, tAnswered = false;
+
+function loadTrivia() {
+  if (tIdx >= triviaData.length) {
+    document.getElementById('triviaQ').textContent = `Конец! Твой счёт: ${tScore}/${triviaData.length} 🎯`;
+    document.getElementById('triviaOpts').innerHTML = `<button class="game-action-btn" onclick="tIdx=0;tScore=0;loadTrivia()">ЗАНОВО</button>`;
+    document.getElementById('triviaScore').textContent = '';
+    return;
+  }
+  const q = triviaData[tIdx];
+  tAnswered = false;
+  document.getElementById('triviaQ').textContent = q.q;
+  document.getElementById('triviaScore').textContent = `Счёт: ${tScore}/${tIdx}`;
+  const optsEl = document.getElementById('triviaOpts');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'trivia-btn';
+    btn.textContent = opt;
+    btn.onclick = () => {
+      if (tAnswered) return;
+      tAnswered = true;
+      if (i === q.a) { btn.classList.add('correct'); tScore++; }
+      else { btn.classList.add('wrong'); optsEl.children[q.a].classList.add('correct'); }
+      document.getElementById('triviaScore').textContent = `Счёт: ${tScore}/${tIdx+1}`;
+      setTimeout(() => { tIdx++; loadTrivia(); }, 1200);
+    };
+    optsEl.appendChild(btn)
