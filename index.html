@@ -1,3 +1,4 @@
+<!-- НАЧАЛО -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -257,7 +258,7 @@ body{font-family:'Press Start 2P',cursive;background:#0d0d1a;color:#fff;overflow
 <span>🎮</span> Побед — только!<br>
 <span>😎</span> Удачи — везде!<br>
 <span>🍕</span> Еды — много!<br><br>
-<span style="color:#06ffa5">Жаль, что далеко...<br>Но этот сайт — от всей души! 🤜🤛</span>
+<span style="color:#06ffa5">Жаль, что далеко...<<br>Но этот сайт — от всей души! 🤜🤛</span>
 </div>
 <br>
 <button class="btn gold" onclick="st(0)">🔄 ЕЩЁ РАЗ!</button>
@@ -269,7 +270,7 @@ const secs=document.querySelectorAll('.sec');let cs=0;
 function st(i){secs[i].scrollIntoView({behavior:'smooth'});cs=i;ud()}
 function ud(){document.querySelectorAll('.ndd').forEach((d,i)=>d.classList.toggle('a',i===cs))}
 window.addEventListener('scroll',()=>{let sp=window.scrollY+window.innerHeight/2;secs.forEach((s,i)=>{if(sp>=s.offsetTop&&sp<s.offsetTop+s.offsetHeight)cs=i});ud()});
-function cf(){let cl=['#ff006e','#ffbe0b','#06ffa5','#3a86ff','#8338ec'];for(let i=0;i<50;i++){setTimeout(()=>{let c=document.createElement('div');c.className='cf';c.style.left=Math.random()*100+'vw';c.style.background=cl[Math.floor(Math.random()*cl.length)];c.style.width=Math.random()*12+4+'px';c.style.height=c.style.width;c.style.animationDuration=Math.random()*2+2+'s';c.style.borderRadius=Math.random()>0.5?'50%':'0';document.body.appendChild(c);setTimeout(()=>c.remove(),4000)},i*25)}}
+function cf(){let cl=['#ff006e','#ffbe0b','#06ffa5','#3a86ff','#8338ec'];for(let i=0;i<<50;i++){setTimeout(()=>{let c=document.createElement('div');c.className='cf';c.style.left=Math.random()*100+'vw';c.style.background=cl[Math.floor(Math.random()*cl.length)];c.style.width=Math.random()*12+4+'px';c.style.height=c.style.width;c.style.animationDuration=Math.random()*2+2+'s';c.style.borderRadius=Math.random()>0.5?'50%':'0';document.body.appendChild(c);setTimeout(()=>c.remove(),4000)},i*25)}}
 let mn=0;const me=['💵','💴','💶','💷','💰','💎','🪙','💸'];
 function sp(){let co=document.getElementById('mco');let b=document.createElement('div');b.className='mb';b.textContent=me[Math.floor(Math.random()*me.length)];b.style.left=Math.random()*90+'%';b.style.animationDuration=Math.random()*3+2+'s';b.style.fontSize=Math.random()*1.5+1.5+'rem';b.onclick=()=>{mn+=Math.floor(Math.random()*500)+50;document.getElementById('mc').textContent='$'+mn.toLocaleString();b.style.transform='scale(2)';b.style.opacity='0';setTimeout(()=>b.remove(),300);cf()};co.appendChild(b);setTimeout(()=>b.remove(),5000)}
 setInterval(sp,700);
@@ -280,8 +281,8 @@ let cb=0;
 function bc(c){if(!c.classList.contains('bo')){c.classList.add('bo');cb++;cf();if(cb===3){document.getElementById('cm').innerHTML='🎉 ВСЕ СВЕЧИ ЗАДУТЫ!<br>ЖЕЛАНИЕ ЗАГАДАНО! 🎂';cf();setTimeout(cf,500);setTimeout(cf,1000)}}}
 let rs='idle',rt=0,bt=Infinity;
 function sr(){let b=document.getElementById('rb');b.className='rb';b.innerHTML='ЖДИ...';rs='waiting';let d=Math.random()*3000+2000;setTimeout(()=>{if(rs==='waiting'){b.classList.add('rdy');b.innerHTML='ЖМИ!!!';rt=Date.now();rs='ready'}},d)}
-function rc(){let b=document.getElementById('rb'),s=document.getElementById('rs');if(rs==='idle')sr();else if(rs==='waiting'){b.classList.add('te');b.innerHTML='РАНО!';s.innerHTML='Слишком рано! Попробуй снова.';rs='idle'}else if(rs==='ready'){let t=Date.now()-rt;if(t<bt)bt=t;b.innerHTML=t+' мс!';s.innerHTML='Время: '+t+' мс<br>Лучшее: '+(bt===Infinity?'—':bt+' мс');rs='idle';if(t<200){s.innerHTML+='<br>🔥 БОГ РЕАКЦИИ!';cf()}}}
+function rc(){let b=document.getElementById('rb'),s=document.getElementById('rs');if(rs==='idle')sr();else if(rs==='waiting'){b.classList.add('te');b.innerHTML='РАНО!';s.innerHTML='Слишком рано! Попробуй снова.';rs='idle'}else if(rs==='ready'){let t=Date.now()-rt;if(t<<bt)bt=t;b.innerHTML=t+' мс!';s.innerHTML='Время: '+t+' мс<br>Лучшее: '+(bt===Infinity?'—':bt+' мс');rs='idle';if(t<<200){s.innerHTML+='<br>🔥 БОГ РЕАКЦИИ!';cf()}}}
 const pr=['Сегодня тебе повезёт! 🍀','Жди сюрприза! 🎁','Деньги идут к тебе! 💸','Ты найдёшь $100! 🪙','Сегодня твой день! 😎','Катка будет изи! 🎮','Пицца будет вкусной! 🍕','Ты станешь миллионером! 💰','Все друзья позавидуют! 😏','Скибиди туалет одобряет! 🚽','Ты — легенда! 🏆','Сегодня всё получится! ✨'];
 function gp(){let b=document.getElementById('cb');b.style.animation='none';b.textContent='...';setTimeout(()=>{let p=pr[Math.floor(Math.random()*pr.length)];b.innerHTML=p;b.style.animation='pu 2s infinite';cf()},1000)}
 let sb=1000;const ssy=['🍒','🍋','🍇','7️⃣','💎','🎰','⭐'];
-function ss2(){if(sb<100){document.getElementById('sr2').textContent='Нет денег, братан! 😢';return}sb-=100;document.getElementById('sb2').textContent=sb;document.getElementById('sr2').textContent='Крутим...';let sp=0;let iv=setInterval(()=>{document.getElementById('s1').textContent=ssy[Math.floor(Math.random()*ssy.length)];document.getElementById('s2').textContent=ssy[Math.floor(Math.random()*ssy.length)];document.getElementById('s3').textContent=ssy[Mat
+function ss2(){if(sb<<100){document.getElementById('sr2').textContent='Нет денег, братан! 😢';return}sb-=100;document.getElementById('sb2').textContent=sb;document.getElementById('sr2').textContent='Крутим...';let sp=0;let iv=setInterval(()=>{document.getElementById('s1').textContent=ssy[Math.floor(Math.random()*ssy.length)];document.getElementById('s2').textContent=ssy[Math.floor(Math.random()*ssy.length)];document.getElementById('s3'
